@@ -7,8 +7,8 @@ import BookInputModal from "../components/BookInputModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Book from "../components/Book";
 
-const NoteScreen = () => {
-    const [modalVisible, setModalVisible] = useState (true)
+const NoteScreen = ({navigation}) => {
+    const [modalVisible, setModalVisible] = useState (false)
     const [books, setBooks] = useState([])
 
     const handleOnSubmit = async (title, author, desc) => {
@@ -23,6 +23,10 @@ const NoteScreen = () => {
         if (result!==null) setBooks(JSON.parse(result));
     }
 
+    const openNote = (book) =>{
+        navigation.navigate('BookDetail', {book});
+    };
+
     useEffect(()=>{
         findBooks();
     },[])
@@ -30,12 +34,13 @@ const NoteScreen = () => {
     return(
         <>
         <StatusBar barStyle="dark-content" backgroundColor={colors.LIGHT}/>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback onPress={() =>{if (Keyboard.isVisible()) {Keyboard.dismiss();}}}>
             <View style={styles.container}> 
                 <Text style={styles.header}> Minha Biblioteca </Text>
                 {books.length ? <SearchBar containerStyle={{marginVertical:15}}/> : null}
                 
-                <FlatList data={books} keyExtractor={item=>item.id.toString()} renderItem={({item})=> <Book item = {item}/>}/>
+                <FlatList data={books} keyExtractor={item=>item.id.toString()} renderItem={({item})=> (<Book onPress={() => openNote(item)} item = {item}/>)}/>
+                
                 {!books.length ? 
                 <View style={[StyleSheet.absoluteFillObject,styles.emptyHeaderContainer]}>
                     <Text style={styles.emptyHeader}> Adicionar Livros </Text>
@@ -52,7 +57,7 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal:20,
         flex:1,
-        zIndex:1,
+        zIndex:-1,
     },
     header:{
         fontSize:25,
@@ -63,6 +68,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textTransform:'uppercase',
         opacity:0.2,
+        zIndex:1,
 
     },
     emptyHeaderContainer:{

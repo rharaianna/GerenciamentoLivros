@@ -56,7 +56,7 @@ const BookInputModal = ({visible, onClose, onSubmit}) => {
                         placeholder="Descrição" 
                         onChangeText={(text)=>handleOnChangeText(text, 'desc')}/>
                     <View style={styles.btnContainer}>
-                        <RoundBtn size={15} antIconName='check' onPress={handleSubmit}/>
+                        <RoundBtn size={15} antIconName='check' onPress={(handleSubmit)}/>
                         {title.trim() || author.trim() || desc.trim() ? <RoundBtn size={15} antIconName='close' onPress={closeModal}/> : null}
                     </View>
                 </View>
