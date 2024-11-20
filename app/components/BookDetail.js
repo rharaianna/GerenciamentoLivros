@@ -1,13 +1,16 @@
 import React from "react";
-import { View, StyleSheet, Text,StatusBar, ScrollView } from "react-native";
+import { View, StyleSheet, Text,StatusBar, ScrollView, Alert} from "react-native";
 import RoundBtn from "./RoundBtn";
 import colors from "../misc/colors";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useBooks } from "../context/NoteProvider";
 
 
 const BookDetail = (props) => {
     const {book} = props.route.params;
+    const{setBooks} = useBooks()
 
-    const foramDate = (ms) =>{ 
+    const formatDate = (ms) =>{ 
         const date = new Date (ms)
         const day = date.getDate()
         const month = date.getMonth() + 1
@@ -17,17 +20,41 @@ const BookDetail = (props) => {
         return `${day}/${month}/${year} - ${hours}:${min}`
     }
 
+    const deleteBook = async() => {
+        const result = await AsyncStorage.getItem('books');
+        let books = [];
+        if (result !== null) books = JSON.parse(result);
+
+        const newBooks = books.filter(n => n.id !== book.id);
+        setBooks(newBooks)
+        await AsyncStorage.setItem('books',JSON.stringify(newBooks));
+
+        props.navigation.goBack();
+    }
+
+    const displayDeleteAlert = () => {
+        Alert.alert('Tem Certeza?', 'Esta ação irá deletar esta nota permanentemente!',[{
+            text: 'Deletar',
+            onPress: deleteBook,
+        },
+        {
+            text: 'Cancelar',
+            onPress: () => console.log('Cancelou ação')
+        },
+    ],{cancelable:true})
+    }
+
     return(
         <>
             <ScrollView contentContainerStyle={styles.container}> 
-                <Text style={styles.time}>{`Criado em ${foramDate(book.time)}`}</Text>
+                <Text style={styles.time}>{`Criado em ${formatDate(book.time)}`}</Text>
                 <Text style={styles.title}>{book.title}</Text>
                 <Text style={styles.author}>{book.author}</Text>
                 <Text style={styles.desc}>{book.desc}</Text>
             </ScrollView>
             <View style={styles.btnContainer}>
-                <RoundBtn antIconName='delete' style={{backgroundColor: colors.ERROR}} onPress={() => console.log("deletando")}/>
                 <RoundBtn antIconName='edit' onPress={() => console.log("editando")}/>
+                <RoundBtn antIconName='delete' style={{backgroundColor: colors.ERROR}} onPress={displayDeleteAlert}/>
             </View>
         </>
     )

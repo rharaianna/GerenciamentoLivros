@@ -1,19 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import NoteScreen from './app/screens/NoteScreen';
+import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import BookDetail from './app/components/BookDetail';
 import { NavigationContainer } from '@react-navigation/native';
+import NoteScreen from './app/screens/NoteScreen';
+import BookDetail from './app/components/BookDetail';
+import NoteProvider from './app/context/NoteProvider';
 
 const Stack= createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerTitle:'', headerTransparent:true}}> 
-        <Stack.Screen component={NoteScreen} name='NoteScreen'/>
-        <Stack.Screen component={BookDetail} name='BookDetail'/>
-      </Stack.Navigator>
+      <NoteProvider>
+        <Stack.Navigator screenOptions={{headerTitle:'', headerTransparent:true}}> 
+          <Stack.Screen component={NoteScreen} name='NoteScreen'/>
+          <Stack.Screen component={BookDetail} name='BookDetail'/>
+        </Stack.Navigator>
+      </NoteProvider>
     </NavigationContainer>
 
   );

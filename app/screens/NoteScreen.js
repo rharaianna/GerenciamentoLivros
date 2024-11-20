@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
 import { View, StyleSheet, Text,StatusBar, TouchableWithoutFeedback, Keyboard, FlatList } from "react-native";
 import colors from "../misc/colors";
 import SearchBar from "../components/SearchBar";
@@ -6,10 +6,13 @@ import RoundBtn from "../components/RoundBtn";
 import BookInputModal from "../components/BookInputModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Book from "../components/Book";
+import { useBooks } from "../context/NoteProvider";
+
+
 
 const NoteScreen = ({navigation}) => {
     const [modalVisible, setModalVisible] = useState (false)
-    const [books, setBooks] = useState([])
+    const {books, setBooks} = useBooks()
 
     const handleOnSubmit = async (title, author, desc) => {
         const book = {id: Date.now(), title, author, desc, time:Date.now()};
@@ -18,18 +21,13 @@ const NoteScreen = ({navigation}) => {
         await AsyncStorage.setItem('books', JSON.stringify(updatedBooks))
     }
 
-    const findBooks = async () => {
-        const result = await AsyncStorage.getItem('books');
-        if (result!==null) setBooks(JSON.parse(result));
-    }
+    
 
     const openNote = (book) =>{
         navigation.navigate('BookDetail', {book});
     };
 
-    useEffect(()=>{
-        findBooks();
-    },[])
+    
     
     return(
         <>
