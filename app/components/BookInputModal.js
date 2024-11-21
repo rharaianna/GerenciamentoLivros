@@ -1,13 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text,StatusBar, Modal, TextInput, Keyboard, TouchableWithoutFeedback } from "react-native";
 import colors from "../misc/colors";
 import RoundBtn from "./RoundBtn";
 
-const BookInputModal = ({visible, onClose, onSubmit}) => {
+const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [desc, setDesc] = useState('')
 
+    
+    useEffect(()=>{
+        if(isEdit){
+            setTitle(book.title);
+            setAuthor(book.author);
+            setDesc(book.desc);
+        }
+    },[isEdit])
+    
     const handleModalClose = () =>{
         Keyboard.dismiss();
     }
@@ -20,17 +29,24 @@ const BookInputModal = ({visible, onClose, onSubmit}) => {
 
     const handleSubmit = () => {
         if(!title.trim() && !author.trim() && !desc.trim()) return onClose();
-        onSubmit(title, author, desc);
-        setTitle('');
-        setAuthor('');
-        setDesc('');
+
+        if(isEdit) {
+            onSubmit(title,author,desc, Date.now());
+        }else{
+            onSubmit(title, author, desc);
+            setTitle('');
+            setAuthor('');
+            setDesc('');
+        }
         onClose();
     };
 
     const closeModal = () => {
-        setTitle('');
-        setAuthor('');
-        setDesc('');
+        if(!isEdit){
+            setTitle('');
+            setAuthor('');
+            setDesc('');
+        }
         onClose();
     }
 

@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Text,StatusBar, ScrollView, Alert} from "react-native";
 import RoundBtn from "./RoundBtn";
 import colors from "../misc/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBooks } from "../context/NoteProvider";
+import BookInputModal from "./BookInputModal";
 
 
 const BookDetail = (props) => {
-    const {book} = props.route.params;
+    const [book,setBook] = useState(props.route.params.book)
     const{setBooks} = useBooks()
+    const [showModal, setShowModal] = useState(false)
+    const [isEdit, setIsEdit] = useState(false)
 
     const formatDate = (ms) =>{ 
         const date = new Date (ms)
@@ -44,18 +47,46 @@ const BookDetail = (props) => {
     ],{cancelable:true})
     }
 
+    const handleUpdate = async (title, author, desc, time ) => {
+        const result = await AsyncStorage.getItem('books')
+        let books = [];
+        if (result !== null) books = JSON.parse(result);
+        
+        const newBooks = books.filter(n => {
+            if(n.id === book.id){
+                n.title = title;
+                n.author = author;
+                n.desc = desc;
+                n.isUpdated = true;
+                n.time = time;
+
+                setBook(n);
+            }
+            return n;
+        })
+        setBooks(newBooks)
+        await AsyncStorage.setItem('books', JSON.stringify(newBooks))
+    }
+    const handleOnClose = () => setShowModal(false)
+
+    const openEditModal = () => {
+        setIsEdit(true)
+        setShowModal(true)
+    }
+
     return(
         <>
             <ScrollView contentContainerStyle={styles.container}> 
-                <Text style={styles.time}>{`Criado em ${formatDate(book.time)}`}</Text>
+                <Text style={styles.time}>{book.isUpdated ? `Atualizado em ${formatDate(book.time)}` : `Criado em ${formatDate(book.time)}`}</Text>
                 <Text style={styles.title}>{book.title}</Text>
                 <Text style={styles.author}>{book.author}</Text>
                 <Text style={styles.desc}>{book.desc}</Text>
             </ScrollView>
             <View style={styles.btnContainer}>
-                <RoundBtn antIconName='edit' onPress={() => console.log("editando")}/>
+                <RoundBtn antIconName='edit' onPress={openEditModal}/>
                 <RoundBtn antIconName='delete' style={{backgroundColor: colors.ERROR}} onPress={displayDeleteAlert}/>
             </View>
+            <BookInputModal isEdit={isEdit} book={book} onClose={handleOnClose} onSubmit={handleUpdate} visible={showModal}/>
         </>
     )
 }
