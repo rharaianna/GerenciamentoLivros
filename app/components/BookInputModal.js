@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text,StatusBar, Modal, TextInput, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { View, StyleSheet,StatusBar, Modal, TextInput, Keyboard, TouchableWithoutFeedback } from "react-native";
 import colors from "../misc/colors";
 import RoundBtn from "./RoundBtn";
 
@@ -53,7 +53,7 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
     return(
         <>
             <StatusBar hidden/>
-            <Modal  visible={visible} animationType="fade"> 
+            <Modal visible={visible} animationType='slide'> 
                 <View style={styles.container}>
                     <TextInput 
                         value={title}
@@ -77,7 +77,7 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
                     </View>
                 </View>
                 <TouchableWithoutFeedback onPress={handleModalClose}>
-                    <View style={[StyleSheet.absoluteFillObject, styles.modalBG]}/>
+                    <View style={[styles.modalBG, StyleSheet.absoluteFillObject]} />
                 </TouchableWithoutFeedback>
             </Modal>
         </>
@@ -85,9 +85,15 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
 }
 
 const styles = StyleSheet.create({
+    modalBG:{
+        flex: 1,
+        zIndex:-1,
+        backgroundColor:'white',
+    },
     container: {
+        flex:1,
         paddingHorizontal:20,
-        paddingTop: 15,
+        paddingTop: 20,
     },
     input: {
         borderBottomWidth:2,
@@ -97,19 +103,15 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
-        height:40,
+        height:60,
         marginBottom:15,
     },
     author: {
-        height:40,
+        height:60,
     },
     desc: {
-        height:100,
+        height:120,
 
-    },
-    modalBG:{
-        flex:1,
-        zIndex:-1,
     },
     btnContainer:{
         flexDirection:'row',

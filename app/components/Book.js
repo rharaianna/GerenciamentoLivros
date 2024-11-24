@@ -7,7 +7,7 @@ const Book = ({item, onPress}) => {
     return(
         <TouchableOpacity onPress={onPress} style={styles.container}> 
             <Text style={styles.title} numberOfLines={1}>{title}</Text>
-            <Text numberOfLines={1}>{author}</Text>
+            <Text style={styles.author} numberOfLines={1}>{author}</Text>
             <Text numberOfLines={2}>{desc}</Text>
         </TouchableOpacity>
     )
@@ -21,10 +21,17 @@ const styles = StyleSheet.create({
         borderRadius:10,
     },
     title:{
-        fontWeight:'bold',
-        fontSize: 16,
+        fontWeight:'900',
+        fontSize: 18,
         color:colors.LIGHT,
     },
+    author:{
+        fontStyle:'italic',
+        fontWeight:'800',
+        color:colors.LIGHT,
+        opacity:0.8,
+
+    }
 })
 
 export default Book;

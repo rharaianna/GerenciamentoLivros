@@ -9,7 +9,15 @@ import Book from "../components/Book";
 import { useBooks } from "../context/NoteProvider";
 import NotFound from "../components/NotFound";
 
-
+const reverseData = data => {
+    return data.sort((a,b)=>{
+        const aInt = parseInt(a.time);
+        const bInt = parseInt(b.time);
+        if (aInt<bInt) return 1;
+        if (aInt==bInt) return 0;
+        if (aInt>bInt) return -1;
+    });
+};
 
 const NoteScreen = ({navigation}) => {
     const [modalVisible, setModalVisible] = useState (false)
@@ -58,7 +66,7 @@ const NoteScreen = ({navigation}) => {
         await findBooks()
     }
 
-    
+    const reverseBooks = reverseData(books)
     
     return(
         <>
@@ -68,7 +76,7 @@ const NoteScreen = ({navigation}) => {
                 <Text style={styles.header}> Minha Biblioteca </Text>
                 {books.length ? <SearchBar onClear={handleOnClear} value={searchQuery} onChangeText={handleOnSearchInput} containerStyle={{marginVertical:15}}/> : null}
                 {resultNotFound ? <NotFound/> :
-                <FlatList data={books} keyExtractor={item=>item.id.toString()} renderItem={({item})=> (<Book onPress={() => openNote(item)} item = {item}/>)}/> }
+                <FlatList data={reverseBooks} keyExtractor={item=>item.id.toString()} renderItem={({item})=> (<Book onPress={() => openNote(item)} item = {item}/>)}/> }
                 
                 {!books.length ? 
                 <View style={[StyleSheet.absoluteFillObject,styles.emptyHeaderContainer]}>
@@ -89,7 +97,8 @@ const styles = StyleSheet.create({
     },
 
     container: {
-        paddingHorizontal:20,
+        padding:20,
+        marginTop:30,
         flex:1,
         zIndex:1,
     },

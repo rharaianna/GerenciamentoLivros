@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     searchBar:{
         borderWidth:0.5,
         borderColor: colors.PRIMARY,
-        height:40,
+        height:45,
         borderRadius:20,
         paddingLeft:15,
         fontSize:18,
