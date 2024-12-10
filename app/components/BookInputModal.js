@@ -8,6 +8,27 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
     const [author, setAuthor] = useState('')
     const [desc, setDesc] = useState('')
 
+    async function sendForm() {
+        try {
+            const response = await fetch('http://192.168.0.6:3000/create', {
+                method: 'POST', 
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: title,
+                    author: author,
+                    desc: desc,
+                }),
+            });
+            const json = await response.json();
+            console.log('Resposta do servidor:', json); // Verifique a resposta do servidor
+        } catch (error) {
+            console.error('Erro ao enviar o formulário:', error); // Mostra qualquer erro
+        }
+    }
+    
     
     useEffect(()=>{
         if(isEdit){
@@ -27,19 +48,30 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
         if(valueFor==='desc') setDesc(text);
     };
 
-    const handleSubmit = () => {
-        if(!title.trim() && !author.trim() && !desc.trim()) return onClose();
-
-        if(isEdit) {
-            onSubmit(title,author,desc, Date.now());
-        }else{
+    const handleSubmit = async () => {
+        if (!title.trim() && !author.trim() && !desc.trim()) return onClose();
+    
+        // Manipulação do formulário de edição ou criação
+        if (isEdit) {
+            onSubmit(title, author, desc, Date.now());
+        } else {
             onSubmit(title, author, desc);
             setTitle('');
             setAuthor('');
             setDesc('');
         }
-        onClose();
+    
+        try {
+            // Aguarda o envio do formulário
+            await sendForm();
+        } catch (error) {
+            console.error('Erro ao enviar o formulário:', error);
+        } finally {
+            // Sempre chama onClose após o envio ou falha
+            onClose();
+        }
     };
+    
 
     const closeModal = () => {
         if(!isEdit){
@@ -72,7 +104,7 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
                         placeholder="Descrição" 
                         onChangeText={(text)=>handleOnChangeText(text, 'desc')}/>
                     <View style={styles.btnContainer}>
-                        <RoundBtn size={15} antIconName='check' onPress={(handleSubmit)}/>
+                        <RoundBtn size={15} antIconName="check" onPress={() => { handleSubmit()}} />
                         {title.trim() || author.trim() || desc.trim() ? <RoundBtn size={15} antIconName='close' onPress={closeModal}/> : null}
                     </View>
                 </View>
