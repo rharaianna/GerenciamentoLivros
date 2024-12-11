@@ -23,6 +23,7 @@ const BookDetail = (props) => {
         return `${day}/${month}/${year} - ${hours}:${min}`
     }
 
+    
     const deleteBook = async() => {
         const result = await AsyncStorage.getItem('books');
         let books = [];

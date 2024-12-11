@@ -8,12 +8,14 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
     const [author, setAuthor] = useState('')
     const [desc, setDesc] = useState('')
 
-    async function sendForm() {
-        try {
-            const response = await fetch('http://192.168.0.6:3000/create', {
+    
+    const handleSubmit = async () => {
+        if (!title.trim() && !author.trim() && !desc.trim()) return onClose();
+
+        try{ 
+            const response = await fetch('http://192.168.0.5:3000/books', {
                 method: 'POST', 
                 headers: {
-                    'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
@@ -22,13 +24,18 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
                     desc: desc,
                 }),
             });
-            const json = await response.json();
-            console.log('Resposta do servidor:', json); // Verifique a resposta do servidor
-        } catch (error) {
-            console.error('Erro ao enviar o formulário:', error); // Mostra qualquer erro
+            if (response.ok){
+                const newBook = await response.json()
+                onSubmit(newBook.title, newBook.author, newBook.desc)
+                setTitle('');
+                setAuthor('');
+                setDesc('');
+                onClose();
+            }    
+        } catch (error){
+            console.error('Erro ao cadastrar livro: ', error);
         }
-    }
-    
+};
     
     useEffect(()=>{
         if(isEdit){
@@ -48,29 +55,6 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
         if(valueFor==='desc') setDesc(text);
     };
 
-    const handleSubmit = async () => {
-        if (!title.trim() && !author.trim() && !desc.trim()) return onClose();
-    
-        // Manipulação do formulário de edição ou criação
-        if (isEdit) {
-            onSubmit(title, author, desc, Date.now());
-        } else {
-            onSubmit(title, author, desc);
-            setTitle('');
-            setAuthor('');
-            setDesc('');
-        }
-    
-        try {
-            // Aguarda o envio do formulário
-            await sendForm();
-        } catch (error) {
-            console.error('Erro ao enviar o formulário:', error);
-        } finally {
-            // Sempre chama onClose após o envio ou falha
-            onClose();
-        }
-    };
     
 
     const closeModal = () => {

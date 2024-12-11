@@ -1,65 +1,91 @@
 const express = require ('express');
 const cors = require ('cors');
 const bodyParser = require('body-parser');
-const models=require('./models');
-const { where } = require('sequelize');
+const {Book} = require('./models');
 
 const app=express();
 app.use(cors());
-app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 
-let book = models.Book
-
-
-
-// app.post('/input', async(req,res)=>{
-//     let response = await book.findOne({
-//         where:{title: req.body.title, author:req.body.author, desc:req.body.desc}
-//     });
-//     console.log(response);
-// })
-
+//Ve se ta rodando
 app.get('/',(req,res)=>{
     res.send('rodandoooooooo');
 });
 
-app.post('/create',async(req,res)=>{
+//Cria livro
+app.post('/books',async(req,res)=>{
     console.log("Dados recebidos:", req.body); // Verificando se os dados estão chegando
     try {
-        const create = await book.create({
-            title: req.body.title,
-            author: req.body.author,
-            desc: req.body.desc,
-            createdAt: new Date(),
-            UpdatedAt: new Date(),
-        });
-        console.log("Livro criado:", create); // Verificando a criação do livro
-        res.json({ message: 'Livro criado com sucesso!', data: create });
+        const {title, author, desc} = req.body;
+        const book = await Book.create({title,author,desc});
+        res.status(201).json(book);
     } catch (error) {
         console.error("Erro ao criar livro:", error);
     }
 });
 
-app.get('/read',async(req,res)=>{
-    let read= await book.findAll({
-        raw:true
-    });
-    console.log(read);
+//Vizualiza todos os livros
+app.get('/books',async(req,res)=>{
+    try{
+        const books = await Book.findAll();
+        res.json(books);
+    }
+    catch (error){
+        console.log("Vizualizar varios nn funciona")
+    }
 });
 
-app.get('/update',async(req,res)=>{
-    let update= await book.findByPk(1).then((response)=>{
-        response.title = 'titulo1Editado';
-        response.save();
-    });
+//Vizualiza um livro
+app.get('/books/:id',async(req,res)=>{
+    try{
+        const {id} = req.params;
+        const books = await Book.findByPk(id);
+        res.json(books);
+    }
+    catch (error){
+        console.log("Vizualizar um nn funciona")
+    }
 });
 
-app.get('/delete',async(req,res)=>{
-    book.destroy({
-        where:{id:2}
-    })
+
+//Atualiza livro
+app.put('/books/:id',async(req,res)=>{
+    try{
+        const {id} = req.params;
+        const { title, author, desc } = req.body;
+        const book = await Book.findByPk(id);
+
+        if(book){
+            await book.update({title, author, desc});
+            res.json(book);
+            console.log("livro atualizado");
+        }
+        else{
+            console.log("livro nn encontrado");
+        }
+    }
+    catch(error){
+        console.log("Atualizar nn funciona");
+    }
+});
+
+app.get('/books/:id',async(req,res)=>{
+    try{
+        const {id} = req.params;
+        const book = await Book.findByPk(id);
+
+        if(book){
+            await book.destroy();
+            console.log("livro destruido")
+        }
+        else{
+            console.log("livro nn encontrado");
+        }
+    }
+    catch (error){
+        console.log("Excluir nn funciona");
+    }
 });
 
 let port=process.env.PORT || 3000;
