@@ -26,14 +26,35 @@ const NoteScreen = ({navigation}) => {
     
     const {books, setBooks,findBooks} = useBooks()
 
-    const handleOnSubmit = async (title, author, desc) => {
-        const book = {id: Date.now(), title, author, desc, time:Date.now()};
-        const updatedBooks = [...books, book];
-        setBooks(updatedBooks)
-        await AsyncStorage.setItem('books', JSON.stringify(updatedBooks))
-    }
+    // const handleOnSubmit = async (title, author, desc) => {
+    //     const book = {id: Date.now(), title, author, desc, time:Date.now()};
+    //     const updatedBooks = [...books, book];
+    //     setBooks(updatedBooks)
+    //     await AsyncStorage.setItem('books', JSON.stringify(updatedBooks))
+    // }
 
-    
+    const handleOnSubmit = async (title, author, desc) => {
+        try{
+            const book = {title, author, desc}
+            const response = await fetch('http://192.168.0.6:3000/books',{
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(book),
+            });
+            if(response.ok){
+                const newBook = await response.json();
+                setBooks([[...books, newBook]]);
+            }
+            else {
+                console.error('Erro ao cadastrar livro no servidor:', response.status, response.statusText);
+            }
+        }
+        catch (error){
+            console.error('Erro ao cadastrar livro:',error)
+        }
+    }
 
     const openNote = (book) =>{
         navigation.navigate('BookDetail', {book});
@@ -76,7 +97,7 @@ const NoteScreen = ({navigation}) => {
                 <Text style={styles.header}> Minha Biblioteca </Text>
                 {books.length ? <SearchBar onClear={handleOnClear} value={searchQuery} onChangeText={handleOnSearchInput} containerStyle={{marginVertical:15}}/> : null}
                 {resultNotFound ? <NotFound/> :
-                <FlatList data={reverseBooks} keyExtractor={item=>item.id.toString()} renderItem={({item})=> (<Book onPress={() => openNote(item)} item = {item}/>)}/> }
+                <FlatList data={reverseBooks} keyExtractor={item=>item.id} renderItem={({item})=> (<Book onPress={() => openNote(item)} item = {item}/>)}/> }
                 
                 {!books.length ? 
                 <View style={[StyleSheet.absoluteFillObject,styles.emptyHeaderContainer]}>

@@ -3,39 +3,27 @@ import { View, StyleSheet,StatusBar, Modal, TextInput, Keyboard, TouchableWithou
 import colors from "../misc/colors";
 import RoundBtn from "./RoundBtn";
 
+
 const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [desc, setDesc] = useState('')
 
-    
-    const handleSubmit = async () => {
-        if (!title.trim() && !author.trim() && !desc.trim()) return onClose();
 
-        try{ 
-            const response = await fetch('http://192.168.0.5:3000/books', {
-                method: 'POST', 
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    title: title,
-                    author: author,
-                    desc: desc,
-                }),
-            });
-            if (response.ok){
-                const newBook = await response.json()
-                onSubmit(newBook.title, newBook.author, newBook.desc)
-                setTitle('');
-                setAuthor('');
-                setDesc('');
-                onClose();
-            }    
-        } catch (error){
-            console.error('Erro ao cadastrar livro: ', error);
-        }
-};
+const handleSubmit = () => {
+    if (!title.trim() && !author.trim() && !desc.trim()) return onClose();
+
+    console.log('pfv escreve qqr merda caraio2')
+    if (isEdit) {
+      onSubmit(title, author, desc, Date.now());
+    } else {
+      onSubmit(title, author, desc);
+      setTitle('');
+      setAuthor('');
+      setDesc('');
+    }
+    onClose();
+  };
     
     useEffect(()=>{
         if(isEdit){
@@ -54,8 +42,6 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
         if(valueFor==='author') setAuthor(text);
         if(valueFor==='desc') setDesc(text);
     };
-
-    
 
     const closeModal = () => {
         if(!isEdit){

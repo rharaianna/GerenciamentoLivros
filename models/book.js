@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Book.init({
+    id: {
+      type: DataTypes.INTEGER, // Define como inteiro
+      primaryKey: true,        // Define como chave primária
+      autoIncrement: true      // Faz com que o valor seja gerado automaticamente
+    },
     title: DataTypes.STRING,
     author: DataTypes.STRING,
     desc: DataTypes.STRING
