@@ -33,6 +33,8 @@ app.get('/books',async(req,res)=>{
     }
     catch (error){
         console.log("Vizualizar varios nn funciona")
+        //Aqui
+        res.status(500).json({ error: 'Erro ao buscar livros.' });
     }
 });
 
