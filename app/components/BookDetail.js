@@ -54,6 +54,7 @@ const BookDetail = (props) => {
             });
             if (response.ok) {
                 setBooks(prevBooks => prevBooks.filter(b => b.id !== book.id));
+                props.navigation.goBack();
             } else {
                 console.error('Erro ao excluir o livro no servidor.');
             }
