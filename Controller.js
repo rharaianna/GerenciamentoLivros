@@ -43,10 +43,15 @@ app.get('/books/:id',async(req,res)=>{
     try{
         const {id} = req.params;
         const books = await Book.findByPk(id);
-        res.json(books);
+        if (book) {
+            res.json(book);
+        } else {
+            res.status(404).json({ error: 'Livro não encontrado.' });
+        }
     }
     catch (error){
-        console.log("Vizualizar um nn funciona")
+        console.log("Erro ao buscar livro:", error);
+        res.status(500).json({ error: 'Erro ao buscar livro.' });
     }
 });
 

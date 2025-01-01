@@ -4,7 +4,6 @@ import RoundBtn from "./RoundBtn";
 import colors from "../misc/colors";
 import { useBooks } from "../context/NoteProvider";
 import BookInputModal from "./BookInputModal";
-import { useNavigation } from '@react-navigation/native';
 
 const BookDetail = (props) => {
     const [book,setBook] = useState(props.route.params.book)
@@ -22,18 +21,6 @@ const BookDetail = (props) => {
         return `${day}/${month}/${year} - ${hours}:${min}`
     }
 
-    
-    // const deleteBook = async() => {
-    //     const result = await AsyncStorage.getItem('books');
-    //     let books = [];
-    //     if (result !== null) books = JSON.parse(result);
-
-    //     const newBooks = books.filter(n => n.id !== book.id);
-    //     setBooks(newBooks)
-    //     await AsyncStorage.setItem('books',JSON.stringify(newBooks));
-
-    //     props.navigation.goBack();
-    // }
 
     const displayDeleteAlert = () => {
         Alert.alert('Tem Certeza?', 'Esta ação irá deletar esta nota permanentemente!',[{
@@ -115,7 +102,7 @@ const BookDetail = (props) => {
             <BookInputModal isEdit={isEdit} book={book} onClose={handleOnClose} onSubmit={(title, author, desc) => handleSaveEdit(title, author, desc)} visible={showModal}/>
         </>
     )
-}
+}  
 
 const styles = StyleSheet.create({
     container: {
