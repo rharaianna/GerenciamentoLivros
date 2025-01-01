@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { View, StyleSheet, Text,StatusBar, ScrollView, Alert} from "react-native";
 import RoundBtn from "./RoundBtn";
 import colors from "../misc/colors";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBooks } from "../context/NoteProvider";
 import BookInputModal from "./BookInputModal";
-
+import { useNavigation } from '@react-navigation/native';
 
 const BookDetail = (props) => {
     const [book,setBook] = useState(props.route.params.book)
@@ -24,22 +23,22 @@ const BookDetail = (props) => {
     }
 
     
-    const deleteBook = async() => {
-        const result = await AsyncStorage.getItem('books');
-        let books = [];
-        if (result !== null) books = JSON.parse(result);
+    // const deleteBook = async() => {
+    //     const result = await AsyncStorage.getItem('books');
+    //     let books = [];
+    //     if (result !== null) books = JSON.parse(result);
 
-        const newBooks = books.filter(n => n.id !== book.id);
-        setBooks(newBooks)
-        await AsyncStorage.setItem('books',JSON.stringify(newBooks));
+    //     const newBooks = books.filter(n => n.id !== book.id);
+    //     setBooks(newBooks)
+    //     await AsyncStorage.setItem('books',JSON.stringify(newBooks));
 
-        props.navigation.goBack();
-    }
+    //     props.navigation.goBack();
+    // }
 
     const displayDeleteAlert = () => {
         Alert.alert('Tem Certeza?', 'Esta ação irá deletar esta nota permanentemente!',[{
             text: 'Deletar',
-            onPress: deleteBook,
+            onPress: handleDelete,
         },
         {
             text: 'Cancelar',
@@ -48,26 +47,51 @@ const BookDetail = (props) => {
     ],{cancelable:true})
     }
 
-    const handleUpdate = async (title, author, desc, time ) => {
-        const result = await AsyncStorage.getItem('books')
-        let books = [];
-        if (result !== null) books = JSON.parse(result);
-        
-        const newBooks = books.filter(n => {
-            if(n.id === book.id){
-                n.title = title;
-                n.author = author;
-                n.desc = desc;
-                n.isUpdated = true;
-                n.time = time;
-
-                setBook(n);
+    const handleDelete = async () => {
+        try {
+            const response = await fetch(`http://192.168.1.8:3000/books/${book.id}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                setBooks(prevBooks => prevBooks.filter(b => b.id !== book.id));
+            } else {
+                console.error('Erro ao excluir o livro no servidor.');
             }
-            return n;
-        })
-        setBooks(newBooks)
-        await AsyncStorage.setItem('books', JSON.stringify(newBooks))
-    }
+        } catch (error) {
+            console.error('Erro ao excluir o livro:', error);
+        }
+
+    };
+    
+    
+    
+
+    const handleSaveEdit = async (title, author, desc) => {
+        try {
+            const updatedBook = { ...book, title, author, desc, isUpdated: true, time: Date.now() };
+    
+            const response = await fetch(`http://192.168.1.8:3000/books/${book.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedBook),
+            });
+    
+            if (response.ok) {
+                const updatedBookData = await response.json();
+                setBooks(prevBooks =>
+                    prevBooks.map(b => (b.id === updatedBookData.id ? updatedBookData : b))
+                );
+                setBook(updatedBookData); // Atualiza o estado local do livro
+                handleOnClose(); // Fecha a modal após salvar
+            } else {
+                console.error('Erro ao atualizar o livro no servidor.');
+            }
+        } catch (error) {
+            console.error('Erro ao salvar alterações no livro:', error);
+        }
+    };
+    
+
     const handleOnClose = () => setShowModal(false)
 
     const openEditModal = () => {
@@ -87,7 +111,7 @@ const BookDetail = (props) => {
                 <RoundBtn antIconName='edit' onPress={openEditModal}/>
                 <RoundBtn antIconName='delete' style={{backgroundColor: colors.ERROR}} onPress={displayDeleteAlert}/>
             </View>
-            <BookInputModal isEdit={isEdit} book={book} onClose={handleOnClose} onSubmit={handleUpdate} visible={showModal}/>
+            <BookInputModal isEdit={isEdit} book={book} onClose={handleOnClose} onSubmit={(title, author, desc) => handleSaveEdit(title, author, desc)} visible={showModal}/>
         </>
     )
 }

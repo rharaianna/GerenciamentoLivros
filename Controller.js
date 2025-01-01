@@ -72,21 +72,23 @@ app.put('/books/:id',async(req,res)=>{
     }
 });
 
-app.get('/books/:id',async(req,res)=>{
+app.delete('/books/:id',async(req,res)=>{
     try{
         const {id} = req.params;
+        console.log(`ID recebido: ${id}`);
         const book = await Book.findByPk(id);
 
         if(book){
             await book.destroy();
-            console.log("livro destruido")
+            res.status(200).send({ message: 'Livro excluído com sucesso' });
         }
         else{
-            console.log("livro nn encontrado");
+            res.status(404).send({ message: 'Livro não encontrado' });
         }
     }
     catch (error){
         console.log("Excluir nn funciona");
+        res.status(500).send({ message: 'Erro no servidor' });
     }
 });
 

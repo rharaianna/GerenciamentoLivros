@@ -12,8 +12,6 @@ const BookInputModal = ({visible, onClose, onSubmit, book, isEdit}) => {
 
 const handleSubmit = () => {
     if (!title.trim() && !author.trim() && !desc.trim()) return onClose();
-
-    console.log('pfv escreve qqr merda caraio2')
     if (isEdit) {
       onSubmit(title, author, desc, Date.now());
     } else {

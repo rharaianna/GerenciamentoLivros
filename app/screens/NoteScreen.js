@@ -1,13 +1,3 @@
-// import React, { useEffect, useState} from "react";
-// import { View, StyleSheet, Text,StatusBar, TouchableWithoutFeedback, Keyboard, FlatList } from "react-native";
-// import colors from "../misc/colors";
-// import SearchBar from "../components/SearchBar";
-// import RoundBtn from "../components/RoundBtn";
-// import BookInputModal from "../components/BookInputModal";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-// import Book from "../components/Book";
-// import { useBooks } from "../context/NoteProvider";
-// import NotFound from "../components/NotFound";
 
 // const reverseData = data => {
 //     return data.sort((a,b)=>{
@@ -113,39 +103,7 @@
 //     )
 // }
 
-// const styles = StyleSheet.create({
-//     header:{
-//         fontSize:25,
-//         fontWeight: 'bold',
-//     },
 
-//     container: {
-//         padding:20,
-//         marginTop:30,
-//         flex:1,
-//         zIndex:1,
-//     },
-//     emptyHeader:{
-//         fontSize:30,
-//         fontWeight: 'bold',
-//         textTransform:'uppercase',
-//         opacity:0.2,
-//     },
-//     emptyHeaderContainer:{
-//         flex:1,
-//         justifyContent:'center',
-//         alignItems:'center',
-//         zIndex:-1,
-//     },
-//     addBtn:{
-//         position:'absolute',
-//         right:20,
-//         bottom:50,
-//         zIndex:1,
-//     },
-// })
-
-// export default NoteScreen;
 
 
 import React, { useEffect, useState } from "react";
@@ -195,7 +153,9 @@ const NoteScreen = ({ navigation }) => {
         await findBooks();
     };
 
-    const reverseBooks = [...books].sort((a, b) => b.time - a.time);
+
+    const reverseBooks = [...books].sort((a, b) => b.id - a.id);
+
 
     return (
         <>
