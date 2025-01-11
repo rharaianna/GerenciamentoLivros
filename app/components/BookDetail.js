@@ -36,7 +36,7 @@ const BookDetail = (props) => {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch(`http://192.168.1.8:3000/books/${book.id}`, {
+            const response = await fetch(`http://192.168.1.115:3000/books/${book.id}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
@@ -58,7 +58,7 @@ const BookDetail = (props) => {
         try {
             const updatedBook = { ...book, title, author, desc, isUpdated: true, time: Date.now() };
     
-            const response = await fetch(`http://192.168.1.8:3000/books/${book.id}`, {
+            const response = await fetch(`http://192.168.1.115:3000/books/${book.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedBook),

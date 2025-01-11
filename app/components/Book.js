@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text,StatusBar, TouchableOpacity } from "react-native";
+import { StyleSheet, Text,StatusBar, TouchableOpacity } from "react-native";
 import colors from "../misc/colors";
 
 const Book = ({item, onPress}) => {

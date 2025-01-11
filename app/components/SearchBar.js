@@ -2,7 +2,6 @@ import React from 'react';
 import { Text,StyleSheet, TextInput, View } from 'react-native';
 import {AntDesign} from '@expo/vector-icons'
 import colors from '../misc/colors';
-import iconSet from '@expo/vector-icons/build/Fontisto';
 
 const SearchBar = ({containerStyle,value, onChangeText, onClear}) => {
     return (
