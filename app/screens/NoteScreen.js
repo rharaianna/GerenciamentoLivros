@@ -4,12 +4,14 @@ import { useBooks } from "../context/NoteProvider"; // Importar o contexto
 import SearchBar from "../components/SearchBar";
 import RoundBtn from "../components/RoundBtn";
 import BookInputModal from "../components/BookInputModal";
+import CEPModal from "../components/CEPModal";
 import NotFound from "../components/NotFound";
 import Book from "../components/Book";
 import colors from "../misc/colors";
 
 const NoteScreen = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisibleCEP, setModalVisibleCEP] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [resultNotFound, setResultNotFound] = useState(false);
 
@@ -79,11 +81,18 @@ const NoteScreen = ({ navigation }) => {
                     )}
                 </View>
             </TouchableWithoutFeedback>
-            <RoundBtn
-                onPress={() => setModalVisible(true)}
-                antIconName="plus"
-                style={styles.addBtn}
-            />
+            <View style={styles.buttonContainer}>
+                <RoundBtn
+                    onPress={() => setModalVisibleCEP(true)}
+                    antIconName="up"
+                    style={styles.CEPButton}
+                />
+                <RoundBtn
+                    onPress={() => setModalVisible(true)}
+                    antIconName="plus"
+                    style={styles.addBtn}
+                />
+            </View>
             <BookInputModal
                 visible={modalVisible}
                 onClose={() => setModalVisible(false)}
@@ -107,6 +116,10 @@ const NoteScreen = ({ navigation }) => {
                         console.error('Erro ao cadastrar livro:', error);
                     }
                 }}
+            />
+            <CEPModal
+                visible={modalVisibleCEP}
+                onClose={() => setModalVisibleCEP(false)}
             />
         </>
     );
@@ -141,6 +154,16 @@ const styles = StyleSheet.create({
         bottom: 50,
         zIndex: 1,
     },
+    CEPButton: {
+        position: "absolute",
+        right: 20,
+        bottom: 120,
+        zIndex: 1,
+    },
+    buttonContainer: {
+        width: '100%',
+        bottom: 20,
+    }
 });
 
 export default NoteScreen;
