@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   StatusBar,
+  Alert,
   Modal,
   TextInput,
   Keyboard,
@@ -20,12 +21,15 @@ const CEPModal = ({ visible, onClose }) => {
     try {
       const response = await fetch(`https://viacep.com.br/ws/${CEP}/json/`);
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (data.erro) {
+        console.log("CEP não encontrado.");
         Alert.alert("Erro", "CEP não encontrado.");
+        
       } else {
         setDadosEndereco(data);
-        setCEP(""); // Limpa o campo após a busca
+        setCEP("");
       }
     } catch (error) {
       Alert.alert("Erro", "Não foi possível buscar o CEP.");
@@ -41,12 +45,6 @@ const CEPModal = ({ visible, onClose }) => {
     Keyboard.dismiss();
   };
 
-  const handleSubmit = () => {
-    if (!CEP.trim()) return onClose();
-    else {
-      console.log(CEP);
-    }
-  };
 
   return (
     <>
@@ -56,7 +54,7 @@ const CEPModal = ({ visible, onClose }) => {
           <TextInput
             value={CEP}
             style={[styles.input, styles.title]}
-            placeholder="Insira CEP aqui"
+            placeholder="Digite o CEP"
             onChangeText={(text) => handleOnChangeText(text, "CEP")}
           />
           {dadosEndereco && (
@@ -78,7 +76,7 @@ const CEPModal = ({ visible, onClose }) => {
             <RoundBtn
               size={15}
               antIconName="close"
-              onPress={() => {{onClose(); setCEP("");}
+              onPress={() => {{onClose(); setCEP(""); setDadosEndereco(null);}
                 
               }}
             />
