@@ -8,10 +8,12 @@ import CEPModal from "../components/CEPModal";
 import NotFound from "../components/NotFound";
 import Book from "../components/Book";
 import colors from "../misc/colors";
+import ListModal from "../components/ListModal";
 
 const NoteScreen = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVisibleCEP, setModalVisibleCEP] = useState(false);
+    const [modalList, setModalList] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [resultNotFound, setResultNotFound] = useState(false);
 
@@ -83,6 +85,11 @@ const NoteScreen = ({ navigation }) => {
             </TouchableWithoutFeedback>
             <View style={styles.buttonContainer}>
                 <RoundBtn
+                    onPress={() => setModalList(true)}
+                    antIconName="book"
+                    style={styles.bookBtn}
+                />
+                <RoundBtn
                     onPress={() => setModalVisibleCEP(true)}
                     antIconName="up"
                     style={styles.CEPButton}
@@ -121,6 +128,10 @@ const NoteScreen = ({ navigation }) => {
                 visible={modalVisibleCEP}
                 onClose={() => setModalVisibleCEP(false)}
             />
+            <ListModal 
+                visible={modalList}
+                onClose={() => setModalList(false)}
+            /> 
         </>
     );
 };
@@ -158,6 +169,12 @@ const styles = StyleSheet.create({
         position: "absolute",
         right: 20,
         bottom: 120,
+        zIndex: 1,
+    },
+    bookBtn: {
+        position: "absolute",
+        right: 20,
+        bottom: 190,
         zIndex: 1,
     },
     buttonContainer: {
